@@ -342,7 +342,7 @@ body.menu-open { overflow: hidden; }
 .photo { position: relative; width: 100%; aspect-ratio: var(--ratio, 4 / 3); overflow: hidden; background: var(--tint); }
 .photo img, .photo picture { width: 100%; height: 100%; object-fit: cover; }
 /* Film-grain noise over every photo. Tweak strength with --noise-opacity. */
-.photo { --noise-opacity: .05; }
+.photo { --noise-opacity: .1; }
 .photo::after {
   content: ""; position: absolute; inset: -50%; z-index: 1; pointer-events: none;
   opacity: var(--noise-opacity);
