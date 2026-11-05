@@ -18,27 +18,6 @@
   // Safety net: never leave content hidden if the load event is slow.
   setTimeout(markLoaded, 1200);
 
-  /* ---------- Header: hide on scroll down, show on scroll up ---------- */
-  var header = document.querySelector(".site-header");
-  if (header) {
-    var lastY = window.scrollY;
-    var ticking = false;
-    window.addEventListener("scroll", function () {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(function () {
-        var y = window.scrollY;
-        var menuOpen = document.body.classList.contains("menu-open");
-        var focusInHeader = header.contains(document.activeElement);
-        if (!menuOpen && !focusInHeader && y > 160 && y > lastY + 4) header.classList.add("is-hidden");
-        else if (y < lastY - 4 || y < 160) header.classList.remove("is-hidden");
-        lastY = y;
-        ticking = false;
-      });
-    }, { passive: true });
-    header.addEventListener("focusin", function () { header.classList.remove("is-hidden"); });
-  }
-
   /* ---------- Mobile menu ---------- */
   var menu = document.getElementById("menu");
   var openBtn = document.querySelector("[data-menu-open]");

@@ -98,7 +98,7 @@ body {
   background: var(--paper);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 img, svg, video { display: block; max-width: 100%; }
 img { height: auto; }
@@ -269,9 +269,7 @@ p { text-wrap: pretty; }
   position: sticky; top: 0; z-index: 50;
   background: var(--paper);
   border-bottom: 1px solid var(--rule);
-  transition: transform .35s var(--ease);
 }
-.site-header.is-hidden { transform: translateY(-100%); }
 .site-header__inner {
   height: var(--header-h);
   display: flex; align-items: center; justify-content: space-between; gap: 24px;
