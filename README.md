@@ -57,14 +57,16 @@ python3 -m http.server 8000
 Search the code for `TODO` and `[` placeholders:
 
 - **Contact form endpoint**: in `contact/index.html` replace `YOUR_FORM_ID` in the form `action` with a [Formspree](https://formspree.io) form ID (free tier is fine; set it to send to hello@niceops.work). Until then, submitting opens the visitor's email app with the message pre-filled, so nothing is lost. If you use a different form service, also add its domain to `connect-src` and `form-action` in the Content-Security-Policy in `vercel.json`.
-- **Impact numbers** on Home: the three `[00]` values. To animate a number, write it as `<p class="impact__value" data-count="40" data-suffix="+">40+</p>`.
-- **Client quotes and titles** (Home slider and About).
-- **Sanja's bio details and LinkedIn URL** (About), and the **NiceOps LinkedIn URL** (footer, Contact, JSON-LD `sameAs`).
+- **Remaining testimonials**: Nenad Tomić (Mad Head Games) and Rob Oseland (Playstudios). Add them to the `QUOTES` list (Home slider) and the About "Work and words" cards.
+- **Sanja's LinkedIn URL** (About), and the **NiceOps LinkedIn URL** (footer, Contact, JSON-LD `sameAs`).
 - **BytePlus outcome** (About project card).
 - **Privacy policy text** and **legal company name / registration number** (footer and privacy page; also add `legalName` and full `address` to the JSON-LD in each page head).
-- **Client logos**: replace the names in the logo grid with `<img src="/assets/img/logos/ubisoft.svg" alt="Ubisoft" width="120" height="40">` (SVG, monochrome, with permission).
 
-## Adding real photos
+## Photos
+
+All photos come from the Figma file and live in `assets/img/photos/` as WebP (800 and 1600 px) with JPEG fallbacks. Logos are SVGs in `assets/img/logos/`.
+
+### Swapping or adding a photo
 
 Every photo slot looks like this:
 
@@ -74,7 +76,7 @@ Every photo slot looks like this:
 </div>
 ```
 
-Replace the inner placeholder with an image (keep the outer `div.photo`, which sets the crop):
+To replace one, overwrite the files with the same names, or put an image inside a placeholder like this (keep the outer `div.photo`, which sets the crop; `object-position` chooses which part stays in frame):
 
 ```html
 <div class="photo" style="--ratio:4 / 5">
