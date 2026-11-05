@@ -6,6 +6,19 @@
   var doc = document.documentElement;
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  /* ---------- Smooth scrolling (Lenis), skipped for reduced motion ---------- */
+  var lenis = null;
+  if (!reduceMotion && typeof window.Lenis === "function") {
+    var headerEl = document.querySelector(".site-header");
+    lenis = new window.Lenis({
+      autoRaf: true,
+      anchors: { offset: -((headerEl ? headerEl.offsetHeight : 0) + 16) },
+      allowNestedScroll: true,
+      naiveDimensions: true,
+      stopInertiaOnNavigate: true
+    });
+  }
+
   /* ---------- Page load: hero lines rise, rule draws, photo wipes in ---------- */
   function markLoaded() {
     document.body.classList.add("is-loaded");
@@ -31,6 +44,7 @@
     menu.setAttribute("aria-hidden", "false");
     openBtn.setAttribute("aria-expanded", "true");
     document.body.classList.add("menu-open");
+    if (lenis) lenis.stop();
     setTimeout(function () { (closeBtn || focusables()[0]).focus(); }, 50);
   }
   function closeMenu() {
@@ -39,6 +53,7 @@
     menu.setAttribute("aria-hidden", "true");
     openBtn.setAttribute("aria-expanded", "false");
     document.body.classList.remove("menu-open");
+    if (lenis) lenis.start();
     openBtn.focus();
   }
   if (menu && openBtn) {
