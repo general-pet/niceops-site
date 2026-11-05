@@ -1,0 +1,16 @@
+# niceops.work
+# Search and AI-search crawlers are welcome (visibility in Google, Bing, ChatGPT Search, Perplexity, Claude).
+User-agent: *
+Allow: /
+
+# Training-only crawlers: allowed by default. To opt out of model training, uncomment:
+# User-agent: GPTBot
+# Disallow: /
+# User-agent: ClaudeBot
+# Disallow: /
+# User-agent: Google-Extended
+# Disallow: /
+# User-agent: CCBot
+# Disallow: /
+
+Sitemap: https://niceops.work/sitemap.xml
