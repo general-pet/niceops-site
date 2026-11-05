@@ -6,6 +6,19 @@
   var doc = document.documentElement;
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  /* ---------- Smooth scrolling (Lenis), skipped for reduced motion ---------- */
+  var lenis = null;
+  if (!reduceMotion && typeof window.Lenis === "function") {
+    var headerEl = document.querySelector(".site-header");
+    lenis = new window.Lenis({
+      autoRaf: true,
+      anchors: { offset: -((headerEl ? headerEl.offsetHeight : 0) + 16) },
+      allowNestedScroll: true,
+      naiveDimensions: true,
+      stopInertiaOnNavigate: true
+    });
+  }
+
   /* ---------- Page load: hero lines rise, rule draws, photo wipes in ---------- */
   function markLoaded() {
     document.body.classList.add("is-loaded");
@@ -17,27 +30,6 @@
   else window.addEventListener("load", function () { requestAnimationFrame(markLoaded); });
   // Safety net: never leave content hidden if the load event is slow.
   setTimeout(markLoaded, 1200);
-
-  /* ---------- Header: hide on scroll down, show on scroll up ---------- */
-  var header = document.querySelector(".site-header");
-  if (header) {
-    var lastY = window.scrollY;
-    var ticking = false;
-    window.addEventListener("scroll", function () {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(function () {
-        var y = window.scrollY;
-        var menuOpen = document.body.classList.contains("menu-open");
-        var focusInHeader = header.contains(document.activeElement);
-        if (!menuOpen && !focusInHeader && y > 160 && y > lastY + 4) header.classList.add("is-hidden");
-        else if (y < lastY - 4 || y < 160) header.classList.remove("is-hidden");
-        lastY = y;
-        ticking = false;
-      });
-    }, { passive: true });
-    header.addEventListener("focusin", function () { header.classList.remove("is-hidden"); });
-  }
 
   /* ---------- Mobile menu ---------- */
   var menu = document.getElementById("menu");
@@ -52,6 +44,7 @@
     menu.setAttribute("aria-hidden", "false");
     openBtn.setAttribute("aria-expanded", "true");
     document.body.classList.add("menu-open");
+    if (lenis) lenis.stop();
     setTimeout(function () { (closeBtn || focusables()[0]).focus(); }, 50);
   }
   function closeMenu() {
@@ -60,6 +53,7 @@
     menu.setAttribute("aria-hidden", "true");
     openBtn.setAttribute("aria-expanded", "false");
     document.body.classList.remove("menu-open");
+    if (lenis) lenis.start();
     openBtn.focus();
   }
   if (menu && openBtn) {
