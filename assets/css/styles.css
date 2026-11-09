@@ -511,7 +511,7 @@ body.menu-open { overflow: hidden; }
 .impact__value { font-size: var(--fs-display); font-weight: 500; letter-spacing: -0.04em; line-height: 1; margin-bottom: 10px; font-variant-numeric: tabular-nums; }
 .impact__item { position: relative; }
 .impact__note { position: absolute; left: 85px; top: 7px; font-size: 16px; white-space: nowrap; }
-@media (min-width: 768px) and (max-width: 1023px) { .impact__note { left: 116px; top: 6px; font-size: 24px; } }
+@media (min-width: 768px) and (max-width: 1023px) { .impact__note { left: 122px; top: 15px; font-size: 24px; } }
 @media (min-width: 1024px) { .impact__grid { grid-template-columns: repeat(4, minmax(0,1fr)); } .impact__note { left: 155px; top: 3px; font-size: var(--fs-hand); } }
 
 /* ---------- Logos ---------- */
