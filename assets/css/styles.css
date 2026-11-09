@@ -510,9 +510,9 @@ body.menu-open { overflow: hidden; }
 .impact__item { border-top: 1px solid var(--ink); padding-top: 12px; }
 .impact__value { font-size: var(--fs-display); font-weight: 500; letter-spacing: -0.04em; line-height: 1; margin-bottom: 10px; font-variant-numeric: tabular-nums; }
 .impact__item { position: relative; }
-.impact__note { position: absolute; left: 85px; top: 7px; font-size: 16px; white-space: nowrap; }
-@media (min-width: 768px) and (max-width: 1023px) { .impact__note { left: 122px; top: 15px; font-size: 24px; } }
-@media (min-width: 1024px) { .impact__grid { grid-template-columns: repeat(4, minmax(0,1fr)); } .impact__note { left: 155px; top: 3px; font-size: var(--fs-hand); } }
+.impact__note { position: absolute; left: 67px; top: 5px; font-size: 22px; letter-spacing: -0.3px; white-space: nowrap; }
+@media (min-width: 768px) and (max-width: 1023px) { .impact__note { left: 122px; top: 15px; font-size: 24px; letter-spacing: normal; } }
+@media (min-width: 1024px) { .impact__grid { grid-template-columns: repeat(4, minmax(0,1fr)); } .impact__note { left: 155px; top: 3px; font-size: var(--fs-hand); letter-spacing: normal; } }
 
 /* ---------- Logos ---------- */
 .logos { display: grid; grid-template-columns: repeat(2, 1fr); border-bottom: 1px solid var(--ink); }
