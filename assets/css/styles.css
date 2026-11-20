@@ -387,10 +387,19 @@ body.menu-open { overflow: hidden; }
 
 /* ---------- Home hero ---------- */
 .hero {
-  display: grid; grid-template-columns: 1fr;
+  display: grid; grid-template-columns: minmax(0, 1fr);
 }
 .hero__text { padding: 48px var(--m) 40px; }
+/* On narrow phones (e.g. iPhone with Display Zoom, 320px wide) shrink the title so
+   "— Transform." always fits: the word is ~4.45em wide plus the 64px rule and 16px gap. */
 .hero__title { margin-bottom: 20px; }
+@media (max-width: 767px) {
+  .hero__title { font-size: min(var(--fs-display), calc((100vw - 2 * var(--m) - 80px) / 4.7)); }
+}
+/* Small laptops: the text column is 61% wide, the rule 10vw and the gap 2vw. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .hero__title { font-size: min(var(--fs-display), calc((49vw - var(--m) - 40px) / 4.6)); }
+}
 .hero__title .row { display: block; }
 .hero__title .row--indent { display: flex; align-items: center; gap: clamp(16px, 2vw, 28px); }
 .hero__rule { flex: 0 0 auto; width: clamp(64px, 10vw, 150px); height: 2px; background: var(--ink); transform-origin: left; }
