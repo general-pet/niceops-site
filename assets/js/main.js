@@ -19,6 +19,30 @@
     });
   }
 
+  /* ---------- Reload: undo a small leftover scroll ----------
+     Some mobile browsers (Brave on iOS after pull-to-refresh) reopen the page a few dozen
+     pixels down, leaving the headline half under the header. On a reload with no #section
+     in the URL, if the page lands only slightly scrolled and the visitor hasn't touched it
+     yet, go back to the top. Real reloads further down the page keep their position. */
+  (function () {
+    var nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+    var isReload = nav ? nav.type === "reload" : (performance.navigation && performance.navigation.type === 1);
+    if (!isReload || window.location.hash) return;
+    var touched = false;
+    ["touchstart", "wheel", "keydown", "pointerdown"].forEach(function (t) {
+      window.addEventListener(t, function () { touched = true; }, { once: true, passive: true });
+    });
+    function snap() {
+      var y = window.scrollY || window.pageYOffset || 0;
+      if (touched || y <= 0 || y >= 150) return;
+      window.scrollTo(0, 0);
+      if (lenis) lenis.scrollTo(0, { immediate: true, force: true });
+    }
+    function soon() { snap(); setTimeout(snap, 120); setTimeout(snap, 400); }
+    if (document.readyState === "complete") soon();
+    else window.addEventListener("load", soon);
+  })();
+
   /* ---------- Page load: hero lines rise, rule draws, photo wipes in ---------- */
   function markLoaded() {
     document.body.classList.add("is-loaded");
