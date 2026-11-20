@@ -238,6 +238,110 @@
     });
   }
 
+  /* ---------- Easter egg: a red chomper eats one line ----------
+     On about 1 in 3 page loads, one marked line turns into dots once it is in view,
+     a chomper eats them, and the line comes back. Nothing is stored; add ?chomp to
+     the URL to always see it. Skipped for reduced motion. */
+  (function () {
+    var forced = /[?&]chomp\b/.test(window.location.search);
+    if (reduceMotion || !("IntersectionObserver" in window) || !Element.prototype.animate) return;
+    if (!forced && Math.random() >= 1 / 3) return;
+    var hosts = Array.prototype.filter.call(document.querySelectorAll("[data-chomp]"), function (el) {
+      return el.offsetWidth > 120;
+    });
+    if (!hosts.length) return;
+    var host = hosts[Math.floor(Math.random() * hosts.length)];
+
+    function backgroundOf(el) {
+      for (; el && el.nodeType === 1; el = el.parentElement) {
+        var c = getComputedStyle(el).backgroundColor;
+        if (c && c !== "transparent" && !/rgba\(.*,\s*0\)$/.test(c)) return c;
+      }
+      return "";
+    }
+
+    function inView() {
+      var r = host.getBoundingClientRect();
+      // Also wait until the line has finished drawing itself in (Home's statement line grows from 0).
+      return !document.hidden && r.top > 40 && r.bottom < window.innerHeight * 0.85 && r.width >= host.offsetWidth - 1;
+    }
+
+    function run() {
+      var cs = getComputedStyle(host);
+      if (cs.position === "static") host.style.position = "relative";
+      var layer = document.createElement("span");
+      layer.className = "chomp";
+      layer.setAttribute("aria-hidden", "true");
+      layer.innerHTML = '<span class="chomp__mask"></span><span class="chomp__dots"></span><span class="chomp__eater"><i></i><i></i></span>';
+      // Cover the line with the colour behind it (start above the host: on Home the host *is* the line).
+      var bg = backgroundOf(host.parentElement);
+      if (bg) layer.style.setProperty("--chomp-bg", bg);
+      host.appendChild(layer);
+
+      var s = layer.offsetHeight;
+      var border = parseFloat(cs.borderTopWidth) || 0;
+      var lineY = border > 0 ? -border / 2 : host.clientHeight / 2;
+      layer.style.top = (lineY - s / 2) + "px";
+
+      // Whole dots only, 17px apart, starting just past the chomper's mouth.
+      var W = host.clientWidth, GAP = 17, first = s + 11.5;
+      var count = Math.max(1, Math.floor((W - s / 2 - first) / GAP) + 1);
+      var lastX = first + (count - 1) * GAP;
+      var dotsBox = layer.children[1], xs = [];
+      for (var k = 0; k < count; k++) {
+        var d = document.createElement("span");
+        d.className = "chomp__dot";
+        d.style.left = (first + k * GAP) + "px";
+        dotsBox.appendChild(d);
+        xs.push(first + k * GAP);
+      }
+
+      // Timeline (ms): appear, pause, travel to the last dot, vanish, line returns. Max ~4.6s.
+      var dist = Math.max(0, lastX - s / 2);
+      var travel = Math.min(3400, Math.max(1200, dist / 0.2));
+      var tIn = 300, tGo = 450, tEnd = tGo + travel, tGone = tEnd + 300, T = tGone + 350;
+      var o = function (t) { return t / T; };
+      var opts = { duration: T, fill: "forwards", easing: "linear" };
+      var mask = layer.children[0], eater = layer.children[2];
+      var anims = [
+        mask.animate([{ opacity: 0 }, { opacity: 1, offset: o(tIn) }, { opacity: 1, offset: o(tGone) }, { opacity: 0 }], opts),
+        dotsBox.animate([{ opacity: 0 }, { opacity: 1, offset: o(tIn) }, { opacity: 1 }], opts),
+        eater.animate([
+          { transform: "translateX(0) scale(0)" },
+          { transform: "translateX(0) scale(1)", offset: o(tIn) },
+          { transform: "translateX(0) scale(1)", offset: o(tGo) },
+          { transform: "translateX(" + dist + "px) scale(1)", offset: o(tEnd) },
+          { transform: "translateX(" + dist + "px) scale(0)", offset: o(tGone) },
+          { transform: "translateX(" + dist + "px) scale(0)" }
+        ], opts)
+      ];
+      // Each dot vanishes as the mouth reaches it.
+      Array.prototype.forEach.call(dotsBox.children, function (dot, k) {
+        var at = tGo + travel * ((xs[k] - s / 2 - 6) / (dist || 1));
+        anims.push(dot.animate([{ opacity: 1, transform: "scale(1)" }, { opacity: 0, transform: "scale(0)" }],
+          { duration: 80, delay: Math.max(tGo, at), fill: "forwards" }));
+      });
+
+      var done = false;
+      function cleanup() {
+        if (done) return;
+        done = true;
+        anims.forEach(function (a) { try { a.cancel(); } catch (e) {} });
+        if (layer.parentNode) layer.parentNode.removeChild(layer);
+      }
+      anims[2].finished.then(cleanup, cleanup);
+      setTimeout(cleanup, T + 1500);
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      if (!entries.some(function (e) { return e.isIntersecting; })) return;
+      io.disconnect();
+      // Give the page's own reveal animations time to settle, then play if still in view.
+      setTimeout(function () { if (inView()) run(); else io.observe(host); }, 1500);
+    }, { rootMargin: "0px 0px -20% 0px", threshold: 0 });
+    io.observe(host);
+  })();
+
   /* ---------- Footer year ---------- */
   document.querySelectorAll("[data-year]").forEach(function (el) { el.textContent = new Date().getFullYear(); });
 })();

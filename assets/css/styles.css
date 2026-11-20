@@ -836,3 +836,29 @@ html.lenis { scroll-behavior: auto; }
 
 /* Tablet-only crop tweak from the design canvas (beats the inline object-position) */
 @media (min-width: 768px) and (max-width: 1023px) { .pos-md-right { object-position: 99% 50% !important; } }
+
+/* ---------- Easter egg: a red chomper eats a line ----------
+   Drawn on its own layer over the line (the line itself is never changed),
+   ignores clicks and screen readers, and is removed when it finishes.
+   Built from spans so section styles such as `.facts div` can't reach it. */
+.chomp {
+  --s: 30px;
+  position: absolute; left: 0; right: 0; height: var(--s);
+  display: block; margin: 0; padding: 0; border: 0;
+  pointer-events: none; z-index: 2;
+}
+.chomp__mask {
+  position: absolute; display: block; left: -1px; right: -1px; top: 50%; height: 6px; margin-top: -3px;
+  background: var(--chomp-bg, var(--paper)); opacity: 0;
+}
+.chomp__dots { position: absolute; display: block; inset: 0; opacity: 0; }
+.chomp__dot {
+  position: absolute; display: block; top: 50%; width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px;
+  border-radius: 50%; background: var(--highlight);
+}
+.chomp__eater { position: absolute; display: block; left: 0; top: 0; width: var(--s); height: var(--s); transform: scale(0); }
+.chomp__eater i { position: absolute; display: block; left: 0; width: 100%; height: 50.5%; background: var(--accent); }
+.chomp__eater i:first-child { top: 0; border-radius: var(--s) var(--s) 0 0; transform-origin: 50% 100%; animation: chomp-top .15s ease-in-out infinite alternate; }
+.chomp__eater i:last-child { bottom: 0; border-radius: 0 0 var(--s) var(--s); transform-origin: 50% 0; animation: chomp-bottom .15s ease-in-out infinite alternate; }
+@keyframes chomp-top { from { transform: rotate(-24deg); } to { transform: rotate(0deg); } }
+@keyframes chomp-bottom { from { transform: rotate(24deg); } to { transform: rotate(0deg); } }
